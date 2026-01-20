@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <title>Saathi AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Splash Screen -->
+  <div id="splash" class="screen">
+    <h1>Saathi AI</h1>
+    <p>Main yahin hoon, tum akela nahi ho 🤍</p>
+  </div>
+
+  <!-- Welcome Screen -->
+  <div id="welcome" class="hidden screen">
+    <h2>Welcome 🤗</h2>
+    <p>
+      Main tumhara caring AI companion hoon.  
+      Main sunungi, samjhoongi aur khayal rakhungi.
+    </p>
+    <button onclick="startApp()">Start Karein</button>
+  </div>
+
+  <!-- Chat Screen -->
+<div id="chat" class="hidden screen">
+    <div class="chat-header">Saathi AI 🤍</div>
+  
+    <div id="messages" class="chat-body">
+      <div class="message ai">
+        Hi, main Saathi hoon 😊<br>
+        Tum kaise ho?
+      </div>
+    </div>
+    <div id="typing" class="typing hidden">
+        Saathi AI typing<span class="dots">...</span>
+      </div>
+      
+  
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Yahan likho..." />
+      <button onclick="sendMessage()">Send</button>
+      <button id="micBtn">🎤</button>
+
+    </div>
+  </div>
+  
+
+  <script src="script.js"></script>
+</body>
+</html>
