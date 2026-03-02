@@ -50,13 +50,9 @@
   <script src="script.js"></script>
 
   <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
-    // Your web app's Firebase configuration
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    
     const firebaseConfig = {
       apiKey: "AIzaSyCoNUwgEmvZkXb9khUAQpTl81NA0D5yHY8",
       authDomain: "saathi-ai-4005c.firebaseapp.com",
@@ -65,32 +61,27 @@
       messagingSenderId: "565322216252",
       appId: "1:565322216252:web:240da60cd1cb551e47a439"
     };
-// Initialize Firebase
+    
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
-    // 🔥 Example Function: Save Chat Message
-async function saveMessage(userName, message, mood) {
-  try {
-    await addDoc(collection(db, "chats"), {
-      user: userName,
-      text: message,
-      mood: mood,
-      timestamp: new Date()
+    
+    document.addEventListener("DOMContentLoaded", () => {
+    
+      const btn = document.getElementById("testBtn");
+    
+      if (btn) {
+        btn.addEventListener("click", async () => {
+          await addDoc(collection(db, "chats"), {
+            user: "Suraj",
+            text: "Hello Saathi AI",
+            mood: "Happy",
+            timestamp: new Date()
+          });
+          console.log("Saved successfully");
+          alert("Data Saved ✅");
+        });
+      }
     });
-    console.log("Message saved successfully");
-  } catch (error) {
-    console.error("Error saving message: ", error);
-  }
-}
-
-// 🔥 TEST BUTTON (Temporary)
-window.saveTestMessage = function () {
-  saveMessage("Suraj", "Hello Saathi AI", "Happy");
-};
-
-  </script>
- <button onclick="saveTestMessage()">Test Save</button>
-  
 </body>
 </html>
+
