@@ -252,3 +252,12 @@ function cleanTextForSpeech(text) {
     ""
   );
 }
+document.getElementById("testBtn").addEventListener("click", async () => {
+  await addDoc(collection(db, "chats"), {
+    user: "Suraj",
+    text: "Hello Saathi AI",
+    mood: "Happy",
+    timestamp: new Date()
+  });
+  console.log("Saved successfully");
+});
