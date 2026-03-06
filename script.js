@@ -1,10 +1,8 @@
 /* ================== GLOBAL STATE ================== */
 
-let lastSpokenText = "";
 let selectedVoice = null;
-
 let userName = null;
-let userMood = "normal"; // normal | happy | sad
+let userMood = "normal";
 let inactivityTimer = null;
 
 
@@ -20,7 +18,7 @@ recognition.continuous = false;
 recognition.interimResults = false;
 
 
-/* ================== VOICE LOAD FIX ================== */
+/* ================== LOAD VOICES ================== */
 
 window.speechSynthesis.onvoiceschanged = () => {
   window.speechSynthesis.getVoices();
@@ -29,7 +27,7 @@ window.speechSynthesis.onvoiceschanged = () => {
 
 /* ================== SPLASH SCREEN ================== */
 
-window.onload = function () {
+window.onload = () => {
 
   setTimeout(() => {
 
@@ -50,20 +48,12 @@ function startApp() {
 
   setTimeout(() => {
 
-    const messages = document.getElementById("messages");
-
     const greeting =
       userName
         ? `Hi ${userName} 😊 main Saathi hoon. Aaj tum kaisa mehsoos kar rahe ho?`
         : "Hi 😊 main Saathi hoon. Aaj tum kaisa mehsoos kar rahe ho?";
 
-    const aiMsg = document.createElement("div");
-    aiMsg.className = "message ai";
-    aiMsg.innerText = greeting;
-
-    messages.appendChild(aiMsg);
-    messages.scrollTop = messages.scrollHeight;
-
+    addMessage(greeting, "ai");
     speakText(greeting);
 
   }, 600);
@@ -71,11 +61,11 @@ function startApp() {
 }
 
 
-/* ================== INPUT + ENTER SEND ================== */
+/* ================== ENTER SEND ================== */
 
 const userInput = document.getElementById("userInput");
 
-userInput.addEventListener("keydown", function (event) {
+userInput.addEventListener("keydown", (event) => {
 
   if (event.key === "Enter" && !event.shiftKey) {
 
@@ -97,7 +87,7 @@ micBtn.addEventListener("click", () => {
 
 });
 
-recognition.onresult = function (event) {
+recognition.onresult = (event) => {
 
   const voiceText = event.results[0][0].transcript;
 
@@ -107,14 +97,14 @@ recognition.onresult = function (event) {
 
 };
 
-recognition.onerror = function () {
+recognition.onerror = () => {
 
   alert("Mic access allow karo 🙏");
 
 };
 
 
-/* ================== NORMALIZE HINDI ================== */
+/* ================== HINDI NORMALIZE ================== */
 
 function normalizeHindi(text) {
 
@@ -144,63 +134,8 @@ function normalizeHindi(text) {
 }
 
 
-/* ================== TYPING ================== */
-
-function showTyping() {
-
-  document.getElementById("typing").classList.remove("hidden");
-
-}
-
-function hideTyping() {
-
-  document.getElementById("typing").classList.add("hidden");
-
-}
-
-
 /* ================== SEND MESSAGE ================== */
 
-
-function sendMessage() {
-
-  let input = document.getElementById("userInput");
-  let text = input.value;
-
-  if (text === "") return;
-
-  addMessage(text, "user");
-
-  input.value = "";
-
-  let aiReply = "Main yahin hoon 🤍";
-
-  setTimeout(() => {
-
-    addMessage(aiReply, "ai");
-
-    saveMessage(text, aiReply);
-
-  }, 1000);
-
-}
-
-function addMessage(text, sender) {
-
-  let chat = document.getElementById("messages");
-
-  let msg = document.createElement("div");
-  msg.className = "message " + sender;
-
-  msg.innerText = text;
-
-  chat.appendChild(msg);
-
-  chat.scrollTop = chat.scrollHeight;
-
-}
-
-/*
 function sendMessage() {
 
   const input = document.getElementById("userInput");
@@ -208,29 +143,16 @@ function sendMessage() {
 
   if (text === "") return;
 
-  const messages = document.getElementById("messages");
-
-  const userMsg = document.createElement("div");
-
-  userMsg.className = "message user";
-  userMsg.innerText = text;
-
-  messages.appendChild(userMsg);
-
-  messages.scrollTop = messages.scrollHeight;
+  addMessage(text, "user");
 
   input.value = "";
 
-  saveMessage(userName, text, userMood);
-
-
-  let reply =
-    userName
-      ? `Main yahin hoon ${userName} 🤍`
-      : "Main yahin hoon 🤍";
-
   const lowerText = normalizeHindi(text);
 
+  let reply = "Main yahin hoon 🤍";
+
+
+  /* NAME DETECT */
 
   if (
     lowerText.startsWith("mera naam") ||
@@ -240,6 +162,9 @@ function sendMessage() {
     userName = text.split(" ").pop();
 
   }
+
+
+  /* MOOD DETECT */
 
   if (
     lowerText.includes("acha") ||
@@ -271,31 +196,40 @@ function sendMessage() {
 
   }
 
-  showTyping();
 
   setTimeout(() => {
 
-    hideTyping();
-
-    const aiMsg = document.createElement("div");
-
-    aiMsg.className = "message ai";
-    aiMsg.innerText = reply;
-
-    messages.appendChild(aiMsg);
-
-    messages.scrollTop = messages.scrollHeight;
-
+    addMessage(reply, "ai");
     speakText(reply);
 
-  }, 1000);
+    saveMessage(text, reply);
+
+  }, 800);
 
   startInactivityTimer();
 
-}     */
+}
 
 
-/* ================== INACTIVITY ================== */
+/* ================== ADD MESSAGE ================== */
+
+function addMessage(text, sender) {
+
+  const chat = document.getElementById("messages");
+
+  const msg = document.createElement("div");
+
+  msg.className = "message " + sender;
+  msg.innerText = text;
+
+  chat.appendChild(msg);
+
+  chat.scrollTop = chat.scrollHeight;
+
+}
+
+
+/* ================== INACTIVITY MESSAGE ================== */
 
 function startInactivityTimer() {
 
@@ -303,18 +237,10 @@ function startInactivityTimer() {
 
   inactivityTimer = setTimeout(() => {
 
-    const messages = document.getElementById("messages");
+    const msg = "Main yahin hoon 🤍 sab theek hai?";
 
-    const aiMsg = document.createElement("div");
-
-    aiMsg.className = "message ai";
-    aiMsg.innerText = "Main yahin hoon 🤍 sab theek hai?";
-
-    messages.appendChild(aiMsg);
-
-    messages.scrollTop = messages.scrollHeight;
-
-    speakText("Main yahin hoon sab theek hai");
+    addMessage(msg, "ai");
+    speakText(msg);
 
   }, 30000);
 
@@ -327,7 +253,10 @@ function speakText(text) {
 
   if (!("speechSynthesis" in window)) return;
 
-  const cleanText = cleanTextForSpeech(text);
+  const cleanText = text.replace(
+    /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF\uDC00-\uDFFF])+/g,
+    ""
+  );
 
   const utterance = new SpeechSynthesisUtterance(cleanText);
 
@@ -339,35 +268,21 @@ function speakText(text) {
 
   if (!selectedVoice) {
 
-    selectedVoice =
-      voices.find(v => v.lang === "hi-IN");
+    selectedVoice = voices.find(v => v.lang === "hi-IN");
 
   }
 
   if (selectedVoice) utterance.voice = selectedVoice;
 
   window.speechSynthesis.cancel();
-
   window.speechSynthesis.speak(utterance);
-
-}
-
-
-/* ================== REMOVE EMOJI ================== */
-
-function cleanTextForSpeech(text) {
-
-  return text.replace(
-    /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF\uDC00-\uDFFF])+/g,
-    ""
-  );
 
 }
 
 
 /* ================== FIREBASE SAVE ================== */
 
-async function saveMessage(userName, message, mood) {
+async function saveMessage(userText, aiText) {
 
   if (!window.db) return;
 
@@ -379,40 +294,21 @@ async function saveMessage(userName, message, mood) {
 
     await addDoc(collection(window.db, "chats"), {
 
-      user: userName || "Anonymous",
-      text: message,
-      mood: mood,
-      timestamp: new Date()
-
-    });
-
-    console.log("Chat Saved");
-
-  } catch (error) {
-
-    console.error("Save Error:", error);
-
-  }
-
-}
-
-import { db } from "./firebase.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-async function saveMessage(userText, aiText) {
-
-  try {
-
-    await addDoc(collection(db, "chats"), {
       user: userText,
       ai: aiText,
+      mood: userMood,
       timestamp: new Date()
+
     });
 
     console.log("Chat saved");
 
-  } catch (e) {
-    console.error("Error saving chat", e);
+  }
+
+  catch (error) {
+
+    console.error("Save error:", error);
+
   }
 
 }
