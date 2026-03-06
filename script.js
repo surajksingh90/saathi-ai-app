@@ -161,6 +161,46 @@ function hideTyping() {
 
 /* ================== SEND MESSAGE ================== */
 
+
+function sendMessage() {
+
+  let input = document.getElementById("userInput");
+  let text = input.value;
+
+  if (text === "") return;
+
+  addMessage(text, "user");
+
+  input.value = "";
+
+  let aiReply = "Main yahin hoon 🤍";
+
+  setTimeout(() => {
+
+    addMessage(aiReply, "ai");
+
+    saveMessage(text, aiReply);
+
+  }, 1000);
+
+}
+
+function addMessage(text, sender) {
+
+  let chat = document.getElementById("messages");
+
+  let msg = document.createElement("div");
+  msg.className = "message " + sender;
+
+  msg.innerText = text;
+
+  chat.appendChild(msg);
+
+  chat.scrollTop = chat.scrollHeight;
+
+}
+
+/*
 function sendMessage() {
 
   const input = document.getElementById("userInput");
@@ -252,7 +292,7 @@ function sendMessage() {
 
   startInactivityTimer();
 
-}
+}     */
 
 
 /* ================== INACTIVITY ================== */
@@ -352,6 +392,27 @@ async function saveMessage(userName, message, mood) {
 
     console.error("Save Error:", error);
 
+  }
+
+}
+
+import { db } from "./firebase.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+async function saveMessage(userText, aiText) {
+
+  try {
+
+    await addDoc(collection(db, "chats"), {
+      user: userText,
+      ai: aiText,
+      timestamp: new Date()
+    });
+
+    console.log("Chat saved");
+
+  } catch (e) {
+    console.error("Error saving chat", e);
   }
 
 }
