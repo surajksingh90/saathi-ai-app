@@ -50,9 +50,6 @@
 
 </div>
 
-<!-- Firebase Test Button -->
-<!-- <button id="testBtn">Test Save</button> -->
-
 <script src="script.js"></script>
 
 <!-- Firebase -->
@@ -71,7 +68,8 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+/* IMPORTANT */
+window.db = getFirestore(app);
 
 document.getElementById("testBtn").addEventListener("click", async () => {
 
