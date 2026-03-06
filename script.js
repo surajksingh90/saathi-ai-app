@@ -46,6 +46,8 @@ function startApp() {
   document.getElementById("welcome").classList.add("hidden");
   document.getElementById("chat").classList.remove("hidden");
 
+  loadChatHistory();
+
   setTimeout(() => {
 
     const greeting =
@@ -310,5 +312,32 @@ async function saveMessage(userText, aiText) {
     console.error("Save error:", error);
 
   }
+
+}
+/* ================== LOAD CHAT HISTORY ================== */
+
+async function loadChatHistory() {
+
+  if (!window.db) return;
+
+  const { collection, getDocs, query, orderBy } = await import(
+    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+  );
+
+  const q = query(
+    collection(window.db, "chats"),
+    orderBy("timestamp")
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  querySnapshot.forEach((doc) => {
+
+    const data = doc.data();
+
+    if (data.user) addMessage(data.user, "user");
+    if (data.ai) addMessage(data.ai, "ai");
+
+  });
 
 }
